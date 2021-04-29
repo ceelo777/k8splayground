@@ -254,3 +254,13 @@ logging_apply:
 .PHONY: logging_delete
 logging_delete:
 	helm uninstall logging -n kube-system
+
+.PHONY: webhook_apply
+webhook_apply:
+	kind load docker-image webhook-server:latest --name $(CLUSTER_NAME)
+	-kubectl delete deployment webhook-service
+	helm install webhook-server apps/webhook-server || helm upgrade webhook-server apps/webhook-server
+
+.PHONY: webhook_delete
+webhook_delete:
+	helm uninstall webhook-service
